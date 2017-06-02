@@ -10,7 +10,7 @@ import math
 
 # Load the MNIST data
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
-
+print(mnist.train)
 # create a tf placeholder for the 28 x 28 image
 x = tf.placeholder(tf.float32, shape=[None, 784])
 
@@ -22,7 +22,7 @@ W = tf.Variable(tf.zeros([784, 10]))
 b = tf.Variable(tf.zeros([10]))
 learning_rate = 0.5
 steps = 10000
-
+epochs = 10
 # Define our model
 y = tf.nn.softmax(tf.matmul(x, W) + b)
 
@@ -42,16 +42,18 @@ sess = tf.Session()
 # run
 sess.run(init)
 
-for i in range(steps):
-    batch_xs, batch_ys = mnist.train.next_batch(100)
+for e in range(epochs):
+        
+    for i in range(steps):
+        batch_xs, batch_ys = mnist.train.next_batch(100)
+        
+        sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
 
-    sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
-
-correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_,1))
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-test_accuracy = sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels})
+    correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_,1))
+    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    test_accuracy = sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels})
+    print("Test Accuracy:")
+    print(test_accuracy)
 
 sess.close()
 
-print("Test Accuracy:")
-print(test_accuracy)
